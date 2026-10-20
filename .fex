@@ -1,0 +1,5 @@
+TARGET = fex
+
+build:
+    go build -o TARGET .
+end
