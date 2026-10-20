@@ -1,15 +1,15 @@
-# ngc
+# fex
 
 A small command runner for `.fex` files.
 
 ## Usage
 
 ```sh
-ngc -help
-ngc -list
-ngc build
-ngc -v build test
-ngc -dry-run build
+fex -help
+fex -list
+fex build
+fex -v build test
+fex -dry-run build
 ```
 
 The program reads `.fex` from the current working directory.
