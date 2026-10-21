@@ -58,4 +58,18 @@ build: # this is not valid comment
 end
 ```
 
+## Development
+
+Run the automated tests and static checks with:
+
+```sh
+make test
+make lint
+```
+
+Use `make test-race` to run the tests with Go's race detector. Tests live beside
+the code they cover in `src/*_test.go`; add a `Test...` function there and it
+will be picked up by both `go test ./...` and the CI workflow on pushes and pull
+requests.
+
 

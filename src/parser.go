@@ -51,7 +51,7 @@ func parseData(data string) (*Program, error) {
 					continue
 				}
 				if commandLine == "end" {
-					i = j + 1
+					i = j
 					endFound = true
 					break
 				}
@@ -149,6 +149,10 @@ func getFiles(dir, mode string) ([]string, error) {
 func correspondsMode(name, mode string) bool {
 	// Valid modes
 	// .sm | *.sm | .sm* | .s*m | *
+	if mode == "" {
+		return false
+	}
+
 	if mode == "*" {
 		return true
 	}
@@ -158,15 +162,15 @@ func correspondsMode(name, mode string) bool {
 	}
 
 	if mode[len(mode)-1] == '*' {
-		return strings.HasSuffix(name, mode[:len(mode)-1])
+		return strings.HasPrefix(name, mode[:len(mode)-1])
 	}
 
 	if strings.Contains(mode, "*") {
 		parts := strings.SplitN(mode, "*", 2)
 		left := parts[0]
 		right := parts[1]
-		hasLeft := strings.HasSuffix(name, left)
-		hasRight := strings.HasPrefix(name, right)
+		hasLeft := strings.HasPrefix(name, left)
+		hasRight := strings.HasSuffix(name, right)
 
 		return hasLeft && hasRight
 	}
