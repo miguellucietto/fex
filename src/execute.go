@@ -7,28 +7,60 @@ import (
 	"strings"
 )
 
-func expandCommand(args []string, variables map[string][]string) ([]string, error) {
-	expanded := make([]string, 0, len(args))
+func expandLine(fields []string, variables map[string][]string) ([]string, error) {
+	var expanded []string
 
-	for _, arg := range args {
-		if !strings.HasPrefix(arg, "$") {
+	for _, arg := range fields {
+		var result strings.Builder
+		start := 0
+		hasVariable := false
+
+		for i := 0; i < len(arg); i++ {
+			if arg[i] != '$' {
+				continue
+			}
+
+			result.WriteString(arg[start:i])
+
+			j := i + 1
+			for j < len(arg) {
+				c := arg[j]
+				if !((c >= 'a' && c <= 'z') ||
+					(c >= 'A' && c <= 'Z') ||
+					(c >= '0' && c <= '9') ||
+					c == '_') {
+					break
+				}
+				j++
+			}
+
+			if j == i+1 {
+				return nil, fmt.Errorf("invalid variable reference in %q", arg)
+			}
+
+			name := arg[i+1 : j]
+			value, exists := variables[name]
+			if !exists {
+				return nil, fmt.Errorf("undefined variable %q", name)
+			}
+
+			hasVariable = true
+			if len(value) > 0 {
+				for _, k := range value {
+					expanded = append(expanded, k)
+				}
+			}
+
+			i = j - 1
+			start = j
+		}
+
+		if !hasVariable {
 			expanded = append(expanded, arg)
 			continue
 		}
 
-		name := strings.TrimPrefix(arg, "$")
-		if name == "" {
-			return nil, fmt.Errorf("empty variable reference")
-		}
-		if strings.Contains(name, "$") {
-			return nil, fmt.Errorf("invalid variable reference %q", arg)
-		}
-
-		value, exists := variables[name]
-		if !exists {
-			return nil, fmt.Errorf("undefined variable %q", name)
-		}
-		expanded = append(expanded, value...)
+		result.WriteString(arg[start:])
 	}
 
 	return expanded, nil
@@ -50,7 +82,7 @@ func executeSection(
 			continue
 		}
 
-		expanded, err := expandCommand(args, variables)
+		expanded, err := expandLine(args, variables)
 		if err != nil {
 			runErrors = append(runErrors, fmt.Errorf("section %q, command %d: %w", sectionName, lineIndex+1, err))
 			continue

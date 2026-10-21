@@ -1,5 +1,10 @@
 TARGET = fex
+SRC /*.go src
 
 build:
-    go build -o TARGET .
+    go build -o $TARGET $SRC
+end
+
+run:
+   ./$TARGET
 end
