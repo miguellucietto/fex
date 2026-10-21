@@ -20,9 +20,12 @@ The program reads `.fex` from the current working directory.
 CC = gcc
 FLAGS = -Wall -Wextra
 TARGET = bin/app
+SRC_FILES /*.c src
+
+# this is a comment
 
 build:
-    $CC $FLAGS main.c -o $TARGET
+    $CC $FLAGS $SRC_FILES -o $TARGET
 end
 
 run:
@@ -44,6 +47,15 @@ the ways are these:
   - `varName /sla dirName` - get every file in `dirName` that contains `sla` in the name
   
 
+#### Comments
 
+You can't make a comment in the end of a line that contains code, only full lines of comments
+
+```
+# this is ok
+build: # this is not valid comment
+    $CC $FLAGS $FILES -o $TARGET # this is not valid comment too
+end
+```
 
 
