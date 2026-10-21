@@ -4,13 +4,13 @@ A small command runner for `.fex` files.
 
 ## Usage
 
-```sh
-fex -help
-fex -list
-fex build
-fex -v build test
-fex -dry-run build
-```
+`fex [flags] [sections]`
+
+The flags are:
+- `help` - Help -> print the help message
+- `-v` - Verbose -> print more information
+- `-list` - List -> print the available sections in your .fex file
+- `-dry-run` - Dry Run -> print the commands of the section(s) without running them
 
 The program reads `.fex` from the current working directory.
 
@@ -19,22 +19,31 @@ The program reads `.fex` from the current working directory.
 ```text
 CC = gcc
 FLAGS = -Wall -Wextra
+TARGET = bin/app
 
 build:
-    $CC $FLAGS main.c -o app
+    $CC $FLAGS main.c -o $TARGET
 end
 
 run:
-    ./app
+    ./$TARGET
 end
 ```
 
-- A section starts with `name:` and ends with `end`.
-- Variables are declared as `NAME = value`.
-- `$NAME` expands to zero or more command arguments.
-- A variable reference must occupy an entire argument. For example, `-I$INCLUDE` is not expanded.
-- Commands are split on whitespace. Quotes and shell syntax are not interpreted.
-- Blank lines and lines starting with `#` are ignored.
-- Commands are executed directly, without a shell.
-- Command failures are collected and printed after the requested sections have been processed.
-- A parse error prevents execution.
+## Features
+
+#### Variables
+
+Variables can have a normal atribution (just 1 or more strings) and a directory atribution,
+the ways are these:
+* `normal atribution` -> `varName = value1 value2`
+* `directory atribution` -> `varName /(mode) dirName` - The `modes` are:
+  - `varName /* dirName` - get every file in the `dirName`
+  - `varName /*sla dirName` - get every file with the suffix `sla` in the `dirName`
+  - `varName /sla* dirName` - get every file with the preffix `sla` in the `dirName`
+  - `varName /sla dirName` - get every file in `dirName` that contains `sla` in the name
+  
+
+
+
+
