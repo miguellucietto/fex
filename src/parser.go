@@ -121,6 +121,11 @@ func parseData(data string) (*Program, error) {
 			program.variables[name] = files
 			continue
 		}
+		if strings.Contains(line, "->") {
+			// SRC_FILES /*.c src
+			// OBJ_FILES -> $SRC_FILES : *.c *.o
+			continue
+		}
 
 		return nil, fmt.Errorf("line %d: unexpected content %q", i+1, line)
 	}
@@ -146,25 +151,113 @@ func getFiles(dir, mode string) ([]string, error) {
 	return files, nil
 }
 
+func transformString(input, inputMode, outputMode string) string {
+	if inputMode == outputMode || !correspondsMode(input, inputMode) {
+		return input
+	}
+
+	if !strings.Contains(outputMode, "*") {
+		return outputMode
+	}
+
+	// * || .
+	if inputMode == "*" || !strings.Contains(inputMode, "*") {
+		// *.sm
+		if outputMode[0] == '*' {
+			suffix := outputMode[1:]
+			return input + suffix
+		}
+
+		// .sm*
+		if outputMode[len(outputMode)-1] == '*' {
+			preffix := outputMode[:len(outputMode)-2]
+			return preffix + input
+		}
+
+		// .s*m
+		parts := strings.SplitN(outputMode, "*", 2)
+		left := parts[0]
+		right := parts[1]
+		return left + input + right
+	}
+
+	if inputMode[0] == '*' {
+		before, found := strings.CutSuffix(input, inputMode[1:])
+		if !found {
+			return input
+		}
+
+		// *
+		if outputMode == "*" {
+			return before
+		}
+
+		// *.sm
+		if outputMode[0] == '*' {
+			return before + outputMode[1:]
+		}
+
+		// .sm*
+		if outputMode[len(outputMode)-1] == '*' {
+			return outputMode[:len(outputMode)-2] + before
+		}
+
+		// .s*m
+		parts := strings.SplitN(outputMode, "*", 2)
+		left := parts[0]
+		right := parts[1]
+		return left + before + right
+	}
+
+	after, found := strings.CutPrefix(input, inputMode[:len(inputMode)-2])
+	if !found {
+		return input
+	}
+
+	// *
+	if outputMode == "*" {
+		return after
+	}
+
+	// *.sm
+	if outputMode[0] == '*' {
+		return after + outputMode[1:]
+	}
+
+	// .sm*
+	if outputMode[len(outputMode)-1] == '*' {
+		return outputMode[:len(outputMode)-2] + after
+	}
+
+	parts := strings.SplitN(outputMode, "*", 2)
+	left := parts[0]
+	right := parts[1]
+	return left + after + right
+}
+
 func correspondsMode(name, mode string) bool {
 	// Valid modes
 	// .sm | *.sm | .sm* | .s*m | *
-	if mode == "" {
+	if mode == "" || strings.Count(mode, "*") > 1 {
 		return false
 	}
 
+	// *
 	if mode == "*" {
 		return true
 	}
 
+	// *.sm
 	if mode[0] == '*' {
 		return strings.HasSuffix(name, mode[1:])
 	}
 
+	// .sm*
 	if mode[len(mode)-1] == '*' {
 		return strings.HasPrefix(name, mode[:len(mode)-1])
 	}
 
+	// .s*m
 	if strings.Contains(mode, "*") {
 		parts := strings.SplitN(mode, "*", 2)
 		left := parts[0]
