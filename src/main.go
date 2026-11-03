@@ -29,7 +29,7 @@ func run(args []string, stdout, stderr *os.File) error {
 	var opts options
 	fs.BoolVar(&opts.help, "help", false, "Print help message")
 	fs.BoolVar(&opts.list, "list", false, "Print available sections")
-	fs.BoolVar(&opts.dryRun, "dry-run", false, "Print commands without executing them")
+	fs.BoolVar(&opts.dryRun, "dry", false, "Print commands without executing them")
 	fs.BoolVar(&opts.verbose, "v", false, "Print commands before executing them")
 
 	fs.Usage = func() {

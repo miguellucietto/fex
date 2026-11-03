@@ -11,25 +11,23 @@ func expandLine(fields []string, variables map[string][]string) ([]string, error
 	var expanded []string
 
 	for _, arg := range fields {
-		var result strings.Builder
-		start := 0
 		hasVariable := false
 
 		for i := 0; i < len(arg); i++ {
+
 			if arg[i] != '$' {
 				continue
 			}
 
-			result.WriteString(arg[start:i])
-
 			j := i + 1
 			for j < len(arg) {
 				c := arg[j]
+				// Aceita apenas letras (a-z, A-Z), números (0-9) e sublinhado (_)
 				if !((c >= 'a' && c <= 'z') ||
 					(c >= 'A' && c <= 'Z') ||
 					(c >= '0' && c <= '9') ||
 					c == '_') {
-					break
+					break // Encontrou um caractere delimitador, para a leitura do nome
 				}
 				j++
 			}
@@ -45,27 +43,21 @@ func expandLine(fields []string, variables map[string][]string) ([]string, error
 			}
 
 			hasVariable = true
-			if len(value) > 0 {
-				for _, k := range value {
-					expanded = append(expanded, k)
-				}
+
+			for _, k := range value {
+				expanded = append(expanded, k)
 			}
 
 			i = j - 1
-			start = j
 		}
 
 		if !hasVariable {
 			expanded = append(expanded, arg)
-			continue
 		}
-
-		result.WriteString(arg[start:])
 	}
 
 	return expanded, nil
 }
-
 func executeSection(
 	sectionName string,
 	commands []string,

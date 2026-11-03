@@ -1,10 +1,19 @@
 TARGET = fex
-SRC /*.go src
+SRC_FILES /*.go src
 
 build:
-    go build -o $TARGET $SRC
+    go build -o $TARGET $SRC_FILES
 end
 
-run:
-   ./$TARGET
+
+test:
+    # append .go to test files
+    mv src/execute_test src/execute_test.go
+    mv src/parser_test src/parser_test.go
+
+    go test ./src
+
+    # take out the suffix .go from the test files
+    mv src/execute_test.go src/execute_test
+    mv src/parser_test.go src/parser_test
 end

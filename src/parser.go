@@ -124,6 +124,33 @@ func parseData(data string) (*Program, error) {
 		if strings.Contains(line, "->") {
 			// SRC_FILES /*.c src
 			// OBJ_FILES -> $SRC_FILES : *.c *.o
+			parts := strings.SplitN(line, "->", 2)
+			left := strings.TrimSpace(parts[0])
+			right := strings.TrimSpace(parts[1])
+			if strings.ContainsAny(left, " $") {
+				return nil, fmt.Errorf("line %d: variable name with spaces or '$' are not allowed", i+1)
+			}
+			name := left
+			if !strings.Contains(right, ":") {
+				return nil, fmt.Errorf("line %d: '->' attribution requires ':' (end of arguments) identifier", i+1)
+			}
+			parts = strings.SplitN(right, ":", 2)
+			left = strings.TrimSpace(parts[0])
+			right = strings.TrimSpace(parts[1])
+			modes := strings.Fields(right)
+			if len(modes) != 2 {
+				return nil, fmt.Errorf("line %d: unexpected amount of modes [%v]", i+1, strings.Join(modes, ", "))
+			}
+			args, err := expandLine(strings.Fields(left), program.variables)
+			if err != nil {
+				return nil, err
+			}
+			var result []string
+			for _, arg := range args {
+				transformedString := transformString(arg, modes[0], modes[1])
+				result = append(result, transformedString)
+			}
+			program.variables[name] = result
 			continue
 		}
 
