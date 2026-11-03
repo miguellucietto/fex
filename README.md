@@ -10,7 +10,7 @@ The flags are:
 - `help` - Help -> print the help message
 - `-v` - Verbose -> print more information
 - `-list` - List -> print the available sections in your .fex file
-- `-dry-run` - Dry Run -> print the commands of the section(s) without running them
+- `-dry` - Dry Run -> print the commands of the section(s) without running them
 
 The program reads `.fex` from the current working directory.
 
@@ -35,17 +35,16 @@ end
 
 ## Features
 
-#### Variables
+#### Variables attributions
 
-Variables can have a normal atribution (just 1 or more strings) and a directory atribution,
-the ways are these:
-* `normal atribution` -> `varName = value1 value2`
-* `directory atribution` -> `varName /(mode) dirName` - The `modes` are:
-  - `varName /* dirName` - get every file in the `dirName`
-  - `varName /*sla dirName` - get every file with the suffix `sla` in the `dirName`
-  - `varName /sla* dirName` - get every file with the preffix `sla` in the `dirName`
-  - `varName /sla dirName` - get every file in `dirName` that contains `sla` in the name
-  
+* `=`: normal way to assign a value to a variable
+ - `VAR = something`
+
+* `/`: get the files that match the mode in a spefic directory
+ - `SRC_FILES /*.c src`
+
+* `->`: every arg is renamed accordingly to the modes, `left mode` = what to change and `right mode` = which change
+ - `OBJ_FILES -> $SRC_FILES : *.c *.o`
 
 #### Comments
 
