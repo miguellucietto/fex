@@ -8,8 +8,13 @@ import (
 )
 
 func expandLine(fields []string, variables map[string][]string) ([]string, error) {
-	var expanded []string
+	var v bool = false
+	if fields[0] == "@v" {
+		fields = fields[1:]
+		v = true
+	}
 
+	var expanded []string
 	for _, arg := range fields {
 		hasVariable := false
 
@@ -56,8 +61,13 @@ func expandLine(fields []string, variables map[string][]string) ([]string, error
 		}
 	}
 
+	if v {
+		fmt.Println("CMD:", strings.Join(expanded, " "))
+	}
+
 	return expanded, nil
 }
+
 func executeSection(
 	sectionName string,
 	commands []string,

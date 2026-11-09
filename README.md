@@ -1,6 +1,6 @@
 # fex
 
-A small command runner for `.fex` files.
+File EXecutor, a small command runner
 
 ## Usage
 

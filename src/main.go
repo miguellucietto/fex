@@ -45,9 +45,11 @@ func run(args []string, stdout, stderr *os.File) error {
 		return nil
 	}
 
-	data, err := os.ReadFile(".fex")
+	fexFile := "Fex"
+
+	data, err := os.ReadFile(fexFile)
 	if err != nil {
-		return fmt.Errorf("could not read .fex: %w", err)
+		return fmt.Errorf("could not read %v: %w", fexFile, err)
 	}
 
 	program, err := parseData(string(data))
