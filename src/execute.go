@@ -8,6 +8,9 @@ import (
 )
 
 func expandLine(fields []string, variables map[string][]string) ([]string, error) {
+	if len(fields) == 0 {
+		return nil, nil
+	}
 	var v bool = false
 	if fields[0] == "@v" {
 		fields = fields[1:]

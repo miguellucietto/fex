@@ -14,9 +14,9 @@ func runInDirectory(t *testing.T, config string) {
 		t.Fatal(err)
 	}
 	workDir := t.TempDir()
-	t.Logf("fixture working directory=%q; .fex contents=%q", workDir, config)
+	t.Logf("fixture working directory=%q; Fex contents=%q", workDir, config)
 	if config != "" {
-		if err := os.WriteFile(filepath.Join(workDir, ".fex"), []byte(config), 0o600); err != nil {
+		if err := os.WriteFile(filepath.Join(workDir, "Fex"), []byte(config), 0o600); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -97,10 +97,10 @@ func TestRunListDryVerboseAndMultipleSections(t *testing.T) {
 func TestRunReportsReadParseAndAggregateExecutionErrors(t *testing.T) {
 	t.Run("missing config", func(t *testing.T) {
 		runInDirectory(t, "")
-		t.Logf("input CLI args=%#v; .fex file is absent; expected read error", []string{"target"})
+		t.Logf("input CLI args=%#v; Fex file is absent; expected read error", []string{"target"})
 		stdout, stderr, _ := captureFiles(t)
 		err := run([]string{"target"}, stdout, stderr)
-		if err == nil || !strings.Contains(err.Error(), "could not read .fex") {
+		if err == nil || !strings.Contains(err.Error(), "could not read Fex") {
 			t.Fatalf("run() error = %v, want read error", err)
 		}
 	})

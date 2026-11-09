@@ -9,10 +9,10 @@ File EXecutor, a small command runner
 The flags are:
 - `help` - Help -> print the help message
 - `-v` - Verbose -> print more information
-- `-list` - List -> print the available sections in your .fex file
+- `-list` - List -> print the available sections in your `Fex` file
 - `-dry` - Dry Run -> print the commands of the section(s) without running them
 
-The program reads `.fex` from the current working directory.
+The program reads `Fex` from the current working directory.
 
 ## File format
 

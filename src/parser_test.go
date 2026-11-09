@@ -12,7 +12,7 @@ func TestParseData(t *testing.T) {
 	t.Parallel()
 
 	input := "# comment\r\nCC = gcc -Wall\r\nbuild:\r\n  $CC main.c\r\n\r\n  # ignored\r\nend\r\nrun:\r\n  ./app\r\nend\r\n"
-	t.Logf("input (.fex contents): %q; expected variables=%#v, sections=%#v, order=%#v", input, map[string][]string{"CC": {"gcc", "-Wall"}}, map[string][]string{"build": {"$CC main.c"}, "run": {"./app"}}, []string{"build", "run"})
+	t.Logf("input (Fex contents): %q; expected variables=%#v, sections=%#v, order=%#v", input, map[string][]string{"CC": {"gcc", "-Wall"}}, map[string][]string{"build": {"$CC main.c"}, "run": {"./app"}}, []string{"build", "run"})
 	program, err := parseData(input)
 	if err != nil {
 		t.Fatalf("parseData() error = %v", err)
@@ -46,7 +46,7 @@ func TestParseDataReportsMalformedSections(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			t.Logf("input (.fex contents): %q; expected error contains: %q", tt.data, tt.want)
+			t.Logf("input (Fex contents): %q; expected error contains: %q", tt.data, tt.want)
 			_, err := parseData(tt.data)
 			if err == nil || !strings.Contains(err.Error(), tt.want) {
 				t.Fatalf("parseData() error = %v, want substring %q", err, tt.want)

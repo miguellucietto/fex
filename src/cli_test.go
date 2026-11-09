@@ -10,7 +10,7 @@ import (
 )
 
 // These tests exercise the real executable from a directory containing its own
-// .fex file, just as users invoke fex in normal use.
+// Fex file, just as users invoke fex in normal use.
 func TestCLIIntegration(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("integration fixtures use Unix command names")
@@ -82,9 +82,9 @@ func TestCLIIntegration(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			workDir := t.TempDir()
-			t.Logf("input CLI args=%#v; .fex contents=%q; expected stdout contains=%#v; expected stderr contains=%#v; expected failure=%t", tt.args, tt.config, tt.wantOut, tt.wantErrOut, tt.wantFail)
+			t.Logf("input CLI args=%#v; Fex contents=%q; expected stdout contains=%#v; expected stderr contains=%#v; expected failure=%t", tt.args, tt.config, tt.wantOut, tt.wantErrOut, tt.wantFail)
 			if tt.config != "" {
-				if err := os.WriteFile(filepath.Join(workDir, ".fex"), []byte(tt.config), 0o600); err != nil {
+				if err := os.WriteFile(filepath.Join(workDir, "Fex"), []byte(tt.config), 0o600); err != nil {
 					t.Fatal(err)
 				}
 			}
