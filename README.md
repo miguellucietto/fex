@@ -59,5 +59,5 @@ end
 
 ## Development
 
-build the fex binary with `go build -o fex ./src`
+build the fex binary with `go build -o fex ./...`
 now you can run the tests with `./fex test` and rebuild it with `./fex build` 
