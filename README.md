@@ -2,6 +2,16 @@
 
 File EXecutor, a small command runner
 
+## Index
+
+* [`Usage`](Usage)
+* [`File format`](File format)
+* [`Features`](Features)
+  - [`Variables attributions`](Variables attributions) 
+  - [`Dependencies`](Dependencies) 
+  - [`Comments`](Comments) 
+* [`Development`](Development)
+
 ## Usage
 
 `fex [flags] [sections]`
