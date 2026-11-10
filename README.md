@@ -4,13 +4,13 @@ File EXecutor, a small command runner
 
 ## Index
 
-* [`Usage`](Usage)
-* [`File format`](File format)
-* [`Features`](Features)
-  - [`Variables attributions`](Variables attributions) 
-  - [`Dependencies`](Dependencies) 
-  - [`Comments`](Comments) 
-* [`Development`](Development)
+- [Usage](#usage)
+- [File format](#file-format)
+- [Features](#features)
+  - [Variables attributions](#variables-attributions)
+  - [Dependencies](#dependencies)
+  - [Comments](#comments)
+- [Development](#development)
 
 ## Usage
 
