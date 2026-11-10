@@ -71,6 +71,7 @@ func expandLine(fields []string, variables map[string][]string) ([]string, error
 	return expanded, nil
 }
 
+// Infinite recursion is the user's responsibility.
 func executeSection(
 	program *Program,
 	sectionName string,
