@@ -102,9 +102,10 @@ func TestExpandLine(t *testing.T) {
 func TestExecuteSectionDryRunExpandsAndDoesNotExecute(t *testing.T) {
 	commands := []string{"echo $MESSAGE", "echo plain"}
 	variables := map[string][]string{"MESSAGE": {"hello", "world"}}
+	program := &Program{variables: variables, sections: map[string]Section{"preview": {name: "preview", commands: commands}}}
 	t.Logf("input section=%q, commands=%#v, variables=%#v, dryRun=true, verbose=false; expected output=%q and no command execution", "preview", commands, variables, "DRY: echo hello world\nDRY: echo plain\n")
 	stdout, stderr, read := captureFiles(t)
-	errs := executeSection("preview", commands, variables, true, false, stdout, stderr)
+	errs := executeSection(program, "preview", commands, true, false, stdout, stderr)
 	if len(errs) != 0 {
 		t.Fatalf("executeSection() errors = %v", errs)
 	}
@@ -119,9 +120,10 @@ func TestExecuteSectionDryRunExpandsAndDoesNotExecute(t *testing.T) {
 
 func TestExecuteSectionReportsErrorsAndContinues(t *testing.T) {
 	commands := []string{"command-that-does-not-exist-fex", "echo after-error"}
+	program := &Program{sections: map[string]Section{"build": {name: "build", commands: commands}}}
 	t.Logf("input section=%q, commands=%#v, variables=nil, dryRun=false, verbose=false; expected one command error and execution of the second command", "build", commands)
 	stdout, stderr, read := captureFiles(t)
-	errs := executeSection("build", commands, nil, false, false, stdout, stderr)
+	errs := executeSection(program, "build", commands, false, false, stdout, stderr)
 	if len(errs) != 1 {
 		t.Fatalf("executeSection() returned %d errors, want 1: %v", len(errs), errs)
 	}
@@ -135,16 +137,17 @@ func TestExecuteSectionReportsErrorsAndContinues(t *testing.T) {
 }
 
 func TestExecuteSectionVerboseOutput(t *testing.T) {
-	commands := []string{"echo visible"}
-	t.Logf("input section=%q, commands=%#v, variables=nil, dryRun=false, verbose=true; expected CMD line and process output", "show", commands)
+	commands := []string{"echo process-output"}
+	program := &Program{sections: map[string]Section{"show": {name: "show", commands: commands}}}
+	t.Logf("input section=%q, commands=%#v, variables=nil, dryRun=false, verbose=true; expected command line followed by process output", "show", commands)
 	stdout, stderr, read := captureFiles(t)
-	errs := executeSection("show", commands, nil, false, true, stdout, stderr)
+	errs := executeSection(program, "show", commands, false, true, stdout, stderr)
 	if len(errs) != 0 {
 		t.Fatalf("executeSection() errors = %v", errs)
 	}
 	out, _ := read()
-	if !strings.Contains(out, "CMD: echo visible\n") || !strings.Contains(out, "visible\n") {
-		t.Errorf("verbose output = %q, want command and process output", out)
+	if want := "echo process-output\nprocess-output\n"; out != want {
+		t.Errorf("verbose output = %q, want %q", out, want)
 	}
 }
 

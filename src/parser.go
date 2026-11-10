@@ -8,16 +8,22 @@ import (
 	"strings"
 )
 
+type Section struct {
+	name     string
+	deps     []string
+	commands []string
+}
+
 type Program struct {
 	variables    map[string][]string
-	sections     map[string][]string
+	sections     map[string]Section
 	sectionOrder []string
 }
 
 func parseData(data string) (*Program, error) {
 	program := &Program{
 		variables: make(map[string][]string),
-		sections:  make(map[string][]string),
+		sections:  make(map[string]Section),
 	}
 
 	lines := splitLines(data)
@@ -28,8 +34,18 @@ func parseData(data string) (*Program, error) {
 			continue
 		}
 
-		if strings.HasSuffix(line, ":") {
-			name := strings.TrimSpace(strings.TrimSuffix(line, ":"))
+		if strings.Contains(line, ":") && !strings.Contains(line, "->") {
+			l := strings.Split(line, ":")
+			if len(strings.Fields(l[0])) > 1 {
+				return nil, fmt.Errorf("line %d: invalid section name", i+1)
+			}
+			name := strings.TrimSpace(l[0])
+
+			var deps []string
+			if len(l) > 1 {
+				deps = strings.Fields(l[1])
+			}
+
 			if name == "" {
 				return nil, fmt.Errorf("line %d: section name cannot be empty", i+1)
 			}
@@ -65,7 +81,11 @@ func parseData(data string) (*Program, error) {
 				return nil, fmt.Errorf("line %d: section %q is missing 'end'", startLine, name)
 			}
 
-			program.sections[name] = commands
+			program.sections[name] = Section{
+				commands: commands,
+				deps:     deps,
+				name:     name,
+			}
 			program.sectionOrder = append(program.sectionOrder, name)
 			continue
 		}

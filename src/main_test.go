@@ -86,7 +86,7 @@ func TestRunListDryVerboseAndMultipleSections(t *testing.T) {
 			t.Fatal(err)
 		}
 		out, _ := read()
-		for _, want := range []string{"CMD: echo hello", "hello", "CMD: echo second", "No errors occurred"} {
+		for _, want := range []string{"echo hello", "hello", "echo second", "No errors occurred"} {
 			if !strings.Contains(out, want) {
 				t.Errorf("verbose output %q does not contain %q", out, want)
 			}

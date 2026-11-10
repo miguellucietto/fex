@@ -65,22 +65,33 @@ func expandLine(fields []string, variables map[string][]string) ([]string, error
 	}
 
 	if v {
-		fmt.Println("CMD:", strings.Join(expanded, " "))
+		fmt.Println(strings.Join(expanded, " "))
 	}
 
 	return expanded, nil
 }
 
 func executeSection(
+	program *Program,
 	sectionName string,
 	commands []string,
-	variables map[string][]string,
 	dryRun bool,
 	verbose bool,
 	stdout, stderr *os.File,
 ) []error {
 	var runErrors []error
 
+	for _, dep := range program.sections[sectionName].deps {
+		section, exists := program.sections[dep]
+		if !exists {
+			runErrors = append(runErrors, fmt.Errorf("section %q does not exist", dep))
+			continue
+		}
+		errs := executeSection(program, section.name, section.commands, dryRun, verbose, stdout, stderr)
+		runErrors = append(runErrors, errs...)
+	}
+
+	variables := program.variables
 	for lineIndex, line := range commands {
 		args := strings.Fields(line)
 		if len(args) == 0 {
@@ -103,7 +114,7 @@ func executeSection(
 		}
 
 		if verbose {
-			fmt.Fprintln(stdout, "CMD:", strings.Join(expanded, " "))
+			fmt.Fprintln(stdout, strings.Join(expanded, " "))
 		}
 
 		if err := execCmd(expanded, stdout, stderr); err != nil {

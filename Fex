@@ -1,12 +1,11 @@
 TARGET = fex
 
-build:
+build: test
     go build -o $TARGET ./...
 end
 
-test:
+test: vet
     go test -race -count=1 -cover ./...
-    go vet ./...
     go test -run=FuzzParseData -fuzz=FuzzParseData -fuzztime=3s ./src
 end
 

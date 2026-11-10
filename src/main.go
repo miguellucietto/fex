@@ -16,6 +16,7 @@ type options struct {
 }
 
 func main() {
+
 	if err := run(os.Args[1:], os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)
 		os.Exit(1)
@@ -73,13 +74,13 @@ func run(args []string, stdout, stderr *os.File) error {
 
 	var runErrors []error
 	for _, name := range sectionNames {
-		commands, exists := program.sections[name]
+		section, exists := program.sections[name]
 		if !exists {
 			runErrors = append(runErrors, fmt.Errorf("section %q does not exist", name))
 			continue
 		}
 
-		errs := executeSection(name, commands, program.variables, opts.dryRun, opts.verbose, stdout, stderr)
+		errs := executeSection(program, section.name, section.commands, opts.dryRun, opts.verbose, stdout, stderr)
 		runErrors = append(runErrors, errs...)
 	}
 

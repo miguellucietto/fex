@@ -20,7 +20,7 @@ func TestParseData(t *testing.T) {
 	if got, want := program.variables["CC"], []string{"gcc", "-Wall"}; !reflect.DeepEqual(got, want) {
 		t.Errorf("variables[CC] = %#v, want %#v", got, want)
 	}
-	if got, want := program.sections["build"], []string{"$CC main.c"}; !reflect.DeepEqual(got, want) {
+	if got, want := program.sections["build"].commands, []string{"$CC main.c"}; !reflect.DeepEqual(got, want) {
 		t.Errorf("sections[build] = %#v, want %#v", got, want)
 	}
 	if got, want := program.sectionOrder, []string{"build", "run"}; !reflect.DeepEqual(got, want) {
