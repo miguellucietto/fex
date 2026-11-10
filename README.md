@@ -28,7 +28,7 @@ build:
     $CC $FLAGS $SRC_FILES -o $TARGET
 end
 
-run:
+run: build
     ./$TARGET
 end
 ```
@@ -45,6 +45,24 @@ end
 
 * `->`: every arg is renamed accordingly to the modes, `left mode` = what to change and `right mode` = which change
  - `OBJ_FILES -> $SRC_FILES : *.c *.o`
+
+#### Dependencies
+
+You can make a section depends on other sections: `section: deps`.
+The program will run the dependencies one by one before the 
+desired section
+
+**Example:**
+```
+build:
+    cc $CFLAGS $CFILES -o $TARGET 
+end
+
+run: build
+    ./$TARGET
+end
+```
+`fex run` will execute the build section before executing the run section
 
 #### Comments
 
